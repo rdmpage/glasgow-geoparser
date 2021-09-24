@@ -30,7 +30,7 @@ function annotations_to_geojson ($annotations)
 			$feature->properties->wikidata_id = $annotation->thing->wikidata_id;
 		}
 
-		if (isset($annotation->thing->osm_id))
+		if (isset($annotation->thing->geonames_id))
 		{
 			$feature->properties->geonames_id = $annotation->thing->geonames_id;
 		}

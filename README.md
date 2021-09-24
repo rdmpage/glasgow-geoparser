@@ -43,3 +43,28 @@ To implement this algorithm I used [Trie tree (prefix tree) detailed-PHP code im
 
 The output of the algorithm is a list of all the strings in the text that match geographic names in the gazetteer. This can be easily converted into GeoJSON for display.
 
+
+## Queries
+
+
+### Countries
+
+### ADM1 areas
+
+### Large islands
+
+
+
+SELECT * WHERE {
+  ?item wdt:P31 wd:Q23442.
+  
+  ?item wdt:P2046 ?area .
+  #FILTER(?area > 100000) .
+  
+  
+}
+LIMIT 10
+
+
+
+

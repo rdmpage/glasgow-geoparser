@@ -36,6 +36,9 @@ function get($url, $user_agent='', $content_type = '')
 	return $data;
 }
 
+//----------------------------------------------------------------------------------------
+
+
 $queries = array(
 'countries' => 'SELECT ?wikidata_id ?name ?enwiki_title (GROUP_CONCAT(?other;SEPARATOR="|") AS ?alternate_names) ?country_code ?latitude  ?longitude ?geonames_id ?osm_id WHERE {
   VALUES ?type { wd:Q6256 }
@@ -75,12 +78,8 @@ $queries = array(
   FILTER((LANG(?name)) = "en")
 }
 GROUP BY ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?longitude ?geonames_id ?osm_id
-'
-);
-
-/*
-// Adm1
-$sparql = 'SELECT ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?longitude ?geonames_id ?osm_id WHERE {
+',
+'adm1' => 'SELECT ?wikidata_id ?name ?enwiki_title (GROUP_CONCAT(?other;SEPARATOR="|") AS ?alternate_names) ?country_code ?latitude  ?longitude ?geonames_id ?osm_id WHERE {
  
    ?country wdt:P31 wd:Q6256.
    ?country wdt:P150 ?item . #adm1
@@ -88,7 +87,11 @@ $sparql = 'SELECT ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?lon
   # id
    BIND( REPLACE( STR(?item),"http://www.wikidata.org/entity/","" ) AS ?wikidata_id). 
    
-   
+     {
+    ?item rdfs:label ?other .
+     FILTER((LANG(?other)) IN ("fr","zh","es","jp"))
+  }
+  
   OPTIONAL { 
     ?sitelink schema:about ?item;
     schema:isPartOf <https://en.wikipedia.org/>;
@@ -113,17 +116,30 @@ $sparql = 'SELECT ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?lon
   ?item rdfs:label ?name .
  
   FILTER((LANG(?name)) = "en")
-}';
-*/
+}
+GROUP BY ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?longitude ?geonames_id ?osm_id',
+
+);
+
+$force = false;
 
 foreach ($queries as $name => $sparql)
 {
-	$url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=' . urlencode($sparql);
-	$output = get($url, '', 'text/csv');
-	
+	echo "Query: $name\n";
 	$filename = $name . '.csv';
 	
-	file_put_contents($filename, $output);
+	if (!file_exists($filename) || $force)
+	{
+		echo "  -- querying Wikidata...\n";
+		$url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=' . urlencode($sparql);
+		$output = get($url, '', 'text/csv');
+		file_put_contents($filename, $output);
+		echo "  -- done.\n";
+	}
+	else
+	{
+		echo "  -- have already.\n";
+	}
 }
 
 ?>
