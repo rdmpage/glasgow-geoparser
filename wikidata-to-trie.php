@@ -12,71 +12,82 @@ function translate_quoted($string) {
 
 //----------------------------------------------------------------------------------------
 
-$filename = 'wikidata/countries.csv';
-
 $trie = new Trie();
-	
-$headings = array();
 
-$row_count = 0;
+// parse all CSV files in folder
 
-$file = @fopen($filename, "r") or die("couldn't open $filename");
+$basedir = dirname(__FILE__) . '/wikidata';
 
-		
-$file_handle = fopen($filename, "r");
-while (!feof($file_handle)) 
+$files = scandir($basedir);
+
+foreach ($files as $filename)
 {
-	$row = fgetcsv(
-		$file_handle, 
-		0, 
-		translate_quoted(','),
-		translate_quoted('"') 
-		);
-		
-	$go = is_array($row);
+	if (preg_match('/\.csv$/', $filename))
+	{	
+		$filename = $basedir . '/' . $filename;
 	
-	if ($go)
-	{
-		if ($row_count == 0)
-		{
-			$headings = $row;		
-		}
-		else
-		{
-			$obj = new stdclass;
+		$headings = array();
+
+		$row_count = 0;
+
+		$file = @fopen($filename, "r") or die("couldn't open $filename");
 		
-			foreach ($row as $k => $v)
+		$file_handle = fopen($filename, "r");
+		while (!feof($file_handle)) 
+		{
+			$row = fgetcsv(
+				$file_handle, 
+				0, 
+				translate_quoted(','),
+				translate_quoted('"') 
+				);
+		
+			$go = is_array($row);
+	
+			if ($go)
 			{
-				if ($v != '')
+				if ($row_count == 0)
 				{
-					switch ($headings[$k])
+					$headings = $row;		
+				}
+				else
+				{
+					$obj = new stdclass;
+		
+					foreach ($row as $k => $v)
 					{
-						// ensure coordinates are treated as numbers in JSON
-						case 'longitude':
-						case 'latitude':
-							$obj->{$headings[$k]} = floatval($v);
-							break;
+						if ($v != '')
+						{
+							switch ($headings[$k])
+							{
+								// ensure coordinates are treated as numbers in JSON
+								case 'longitude':
+								case 'latitude':
+									$obj->{$headings[$k]} = floatval($v);
+									break;
 					
-						default:
-							$obj->{$headings[$k]} = $v;
-							break;							
+								default:
+									$obj->{$headings[$k]} = $v;
+									break;							
+							}
+					
+						}
 					}
 					
+					// print_r($obj);
+					
+					$trie->add($obj);
 				}
-			}
-			$trie->add($obj);
+			}	
+			$row_count++;
 		}
-	}	
-	$row_count++;
+		
+		fclose($file_handle);
+		
+	}
 }
 
-/*
-$dot = $trie->toDot();
-echo $dot;
-*/
-
-//echo serialize($trie);
-
+// store data
 $filename = 'trie.dat';
 file_put_contents($filename, serialize($trie));
 
