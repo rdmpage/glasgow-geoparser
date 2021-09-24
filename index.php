@@ -2,7 +2,50 @@
 
 error_reporting(E_ALL);
 
-mb_internal_encoding("UTF-8");
+require_once (dirname(__FILE__) . '/trie.php');
+
+//----------------------------------------------------------------------------------------
+function annotations_to_geojson ($annotations)
+{
+	$geojson = new stdclass;
+	$geojson->type = "FeatureCollection";
+	$geojson->features = array();
+
+	foreach ($annotations as $annotation)
+	{
+		$feature = new stdclass;
+		$feature->type = "Feature";
+	
+		$feature->geometry = new stdclass;
+		$feature->geometry->type = "Point";
+		$feature->geometry->coordinates = array();
+
+		$feature->geometry->coordinates = array($annotation->thing->longitude, $annotation->thing->latitude);
+	
+		$feature->properties = new stdclass;
+		$feature->properties->name = $annotation->thing->name;
+		
+		if (isset($annotation->thing->wikidata_id))
+		{
+			$feature->properties->wikidata_id = $annotation->thing->wikidata_id;
+		}
+
+		if (isset($annotation->thing->osm_id))
+		{
+			$feature->properties->geonames_id = $annotation->thing->geonames_id;
+		}
+		
+	
+		if (isset($annotation->thing->osm_id))
+		{
+			$feature->properties->osm_id = $annotation->thing->osm_id;
+		}
+	
+		$geojson->features[] = $feature;
+	}
+
+	return $geojson;
+}
 
 $post = null;
 
@@ -12,7 +55,20 @@ if (!empty($_POST))
 	
 	
 	$text = $_POST['text'];
-	echo $text;
+
+	// load serialize object
+	$filename = 'trie.dat';
+	$data = file_get_contents($filename);
+	$trie = unserialize($data);
+	
+	$annotations = $trie->flash($text);
+
+	$geo = annotations_to_geojson ($annotations);
+
+	header("Content-type: application/json");
+	echo json_encode($geo, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+	
 }
 else
 {
