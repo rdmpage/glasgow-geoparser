@@ -1,0 +1,10 @@
+{
+    "name": "rpage/glasgow-geoparser",
+    "authors": [
+        {
+            "name": "Roderic Page",
+            "email": "rdmpage@gmail.com"
+        }
+    ],
+    "require": {}
+}
