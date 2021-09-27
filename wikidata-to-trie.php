@@ -24,6 +24,8 @@ foreach ($files as $filename)
 {
 	if (preg_match('/\.csv$/', $filename))
 	{	
+		echo $filename . "\n";
+	
 		$filename = $basedir . '/' . $filename;
 	
 		$headings = array();
@@ -42,7 +44,7 @@ foreach ($files as $filename)
 				translate_quoted('"') 
 				);
 		
-			$go = is_array($row);
+			$go = is_array($row) && count($row) > 1;
 	
 			if ($go)
 			{

@@ -52,7 +52,7 @@ $queries = array(
   
   {
     ?item rdfs:label ?other .
-     FILTER((LANG(?other)) IN ("fr","zh","es","jp"))
+     FILTER((LANG(?other)) IN ("fr","zh","es","jp","de"))
   }
   
   OPTIONAL { 
@@ -89,7 +89,7 @@ GROUP BY ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?longitude ?g
    
      {
     ?item rdfs:label ?other .
-     FILTER((LANG(?other)) IN ("fr","zh","es","jp"))
+     FILTER((LANG(?other)) IN ("fr","zh","es","jp","de"))
   }
   
   OPTIONAL { 
@@ -122,6 +122,7 @@ GROUP BY ?wikidata_id ?name ?enwiki_title ?country_code ?latitude  ?longitude ?g
 );
 
 $force = false;
+$force = true;
 
 foreach ($queries as $name => $sparql)
 {
