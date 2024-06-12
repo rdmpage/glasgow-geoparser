@@ -299,11 +299,17 @@ class Trie {
 						
 						$hit->thing = $thing_found;
 						
-						$things[] = $hit;					
+						$things[] = $hit;		
+						
+						$sequence_found = "";
+						$longest_sequence_found = "";									
 					}
 				}
 				else
 				{
+					$sequence_found = "";
+					$longest_sequence_found = "";				
+				
 					// # we reset current_dict
 					$current = $this->root;					
 				}
