@@ -289,7 +289,7 @@ class Trie {
 					
 					$current = $this->root;
 					
-					if ($longest_sequence_found != '')
+					if ($longest_sequence_found != '' && $thing_found)
 					{					
 						$hit = new stdclass;
 						$hit->text = $longest_sequence_found;
@@ -344,6 +344,7 @@ class Trie {
 					$index = $indexy;	
 					
 					$sequence_found  = '';
+					$longest_sequence_found = '';
 				}				
 			}
 			
