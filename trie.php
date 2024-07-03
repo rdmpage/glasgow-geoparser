@@ -207,8 +207,7 @@ class Trie {
 		$is_longer_seq_found 		= false;
 		
 		$thing_found				= null;
-		
-		
+				
 		while ($index < $sentence_len)
 		{			
 			//echo "|$sequence_found|\n";
@@ -374,9 +373,6 @@ class Trie {
 		return $things;	
 	}
 
-
 }
-
-
 
 ?>

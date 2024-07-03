@@ -7,6 +7,13 @@ require_once (dirname(__FILE__) . '/trie.php');
 //----------------------------------------------------------------------------------------
 function annotations_to_geojson ($annotations)
 {
+	if (0)
+	{
+		echo '<pre>';
+		print_r($annotations);
+		echo '</pre>';
+	}
+
 	$geojson = new stdclass;
 	$geojson->type = "FeatureCollection";
 	$geojson->features = array();
@@ -64,8 +71,7 @@ $post = null;
 if (!empty($_POST))
 {
 	$post = file_get_contents('php://input');
-	
-	
+		
 	$text = $_POST['text'];
 
 	// load serialize object
@@ -79,8 +85,6 @@ if (!empty($_POST))
 
 	header("Content-type: application/json");
 	echo json_encode($geo, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-	
 }
 else
 {
@@ -101,7 +105,6 @@ else
 			font-size:1em;
 		}
 		
-
 	</style>
 </head>
 <body>
