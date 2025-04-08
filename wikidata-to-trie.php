@@ -93,6 +93,7 @@ foreach ($files as $filename)
 $filename = 'trie.dat';
 file_put_contents($filename, serialize($trie));
 
-
+$filename = 'trie.dot';
+file_put_contents($filename, $trie->toDot());
 
 ?>
